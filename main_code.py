@@ -24,7 +24,7 @@ import math
 
 dim = 61
 
-datasets = dataset_split("dataset/Numpy/noise 1/data_dim_"+str(dim)+"_save.npy")
+datasets = dataset_split("dataset/Numpy/noise 1/data_dim_"+str(dim)+"_noise_0_save.npy")
 
 #%%
 result = run_DBN_dim(datasets=datasets, n_ins=dim*dim, n_outs=dim*dim, layers=[dim*dim], pretraining_epochs=2, batch_size=600)
