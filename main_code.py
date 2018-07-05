@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 import math
 import pandas as pd
 
-dims = [61,51,41,31,21]
+dims = [15,13,11,9]
 
 num_epoch = 100
 
@@ -34,7 +34,7 @@ pretrain_lr = 0.1
 
 for dim in dims:
 
-    datasets = dataset_split("dataset/Numpy/noise 1/data_dim_"+str(dim)+"_noise_0_save.npy")
+    datasets = dataset_split("/my_data/data_dim_"+str(dim)+"_noise_0_save.npy")
 
     result = run_DBN_dim(datasets=datasets, n_ins=dim*dim, n_outs=dim*dim, layers=[dim*dim, dim*dim], pretraining_epochs=num_epoch, batch_size=num_batch, k = k, pretrain_lr = pretrain_lr)
     
