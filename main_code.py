@@ -19,81 +19,42 @@ import six.moves.cPickle as pickle
 import numpy
 import matplotlib.pyplot as plt
 import math
+import pandas as pd
 
-#%%
+dims = [61,51,41,31,21]
 
-dim = 61
+num_epoch = 100
 
-datasets = dataset_split("dataset/Numpy/noise 1/data_dim_"+str(dim)+"_noise_0_save.npy")
+num_batch = 500
 
-#%%
-result = run_DBN_dim(datasets=datasets, n_ins=dim*dim, n_outs=dim*dim, layers=[dim*dim], pretraining_epochs=2, batch_size=600)
+k = 1
 
-with open('only_dbn.pkl', 'wb') as f:
-    pickle.dump(result[0], f)
+pretrain_lr = 0.1
+
+
+for dim in dims:
+
+    datasets = dataset_split("dataset/Numpy/noise 1/data_dim_"+str(dim)+"_noise_0_save.npy")
+
+    result = run_DBN_dim(datasets=datasets, n_ins=dim*dim, n_outs=dim*dim, layers=[dim*dim, dim*dim], pretraining_epochs=num_epoch, batch_size=num_batch, k = k, pretrain_lr = pretrain_lr)
     
-#%% 
-with open('only_dbn.pkl', 'rb') as f:
-    dbn = pickle.load(f)
-#%%    
+    conf = 'dim_'+str(dim)+'_layer_'+str(dim*dim)+'_'+str(dim*dim)+'_epoch_'+str(num_epoch)+'_batch_'+str(num_batch)+'_K_'+str(k)+'_pretrain_lr_'+str(pretrain_lr)
     
-len(dbn.rbm_layers)
+    #save model
+    with open('models_dbn/dbn_models_'+conf+'.pkl', 'wb') as f:
+        pickle.dump(result[0], f)
+    
+    #save history
+    numpy.save('models_dbn/history_numpy_pretrain_'+conf+'.npy',result[1])
+    
+    df_hist_model = pd.DataFrame(result[1])
+    df_hist_model.to_csv('models_dbn/history_csv_pretrain_'+conf+'.csv')
+    
+    
+    #save range time
+    file_range_time = open('models_dbn/range_time_models_'+conf+'.txt', 'w')
+    
+    file_range_time.write("Range time : "+str(result[2])+" Minutes")
+    
+    file_range_time.close()
 
-dbn.rbm_layers[0].W.get_value().shape
-
-
-dbn.sigmoid_layers[-1].output
-
-
-#%%
-
-train, validation, test = datasets
-        
-X_train, y_train = train[0].get_value(borrow=True), train[1].get_value(borrow=True)
-X_val, y_val = validation[0].get_value(borrow=True), validation[1].get_value(borrow=True)
-X_test, y_test = test[0].get_value(borrow=True), test[1].get_value(borrow=True)
-        
-#%%
-index = T.lscalar()
-
-predict_fn = theano.function(
-            inputs = [],
-            outputs = dbn.output,
-            givens={
-                    dbn.x : X_test,
-                    dbn.y : y_test
-                },
-            on_unused_input='ignore'
-        )
-
-#%%
-result_predict = predict_fn()
-"""
-#%%
-n_dim = X_test.shape[0]
-temp_x = numpy.reshape(X_test[0], (int(math.sqrt(n_dim))-1, int(math.sqrt(n_dim))-1))
-
-plt.imshow(temp_x, cmap='gray')
-
-plt.show()
-
-temp_result = numpy.reshape(result_predict[0], (int(math.sqrt(n_dim))-1, int(math.sqrt(n_dim))-1))
-
-plt.imshow(temp_result, cmap='gray')
-
-plt.show()
-#%%
-tmp = numpy.sum(result_predict[0])
-
-print(tmp)
-
-tmp = numpy.mean(result_predict[0])
-
-print(tmp)
-
-#%%
-plt.imshow(dbn.rbm_layers[-1].W.get_value())
-
-#%%
-dbn.rbm_layers[-1].W.get_value()
-"""
