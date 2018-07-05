@@ -68,7 +68,7 @@ predict_fn = theano.function(
 
 #%%
 result_predict = predict_fn()
-
+"""
 #%%
 n_dim = X_test.shape[0]
 temp_x = numpy.reshape(X_test[0], (int(math.sqrt(n_dim))-1, int(math.sqrt(n_dim))-1))
@@ -96,3 +96,4 @@ plt.imshow(dbn.rbm_layers[-1].W.get_value())
 
 #%%
 dbn.rbm_layers[-1].W.get_value()
+"""
