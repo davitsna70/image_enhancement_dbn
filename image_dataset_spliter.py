@@ -52,7 +52,7 @@ def dataset_converter(dataset):
         data_y.append(y.flatten())
     print("...Dataset finish convert...")
         
-    convert_dataset = [np.asarray(data_X)/1., np.asarray(data_y)/255.]
+    convert_dataset = [np.asarray(data_X)/255., np.asarray(data_y)/255.]
     
     return np.asarray(convert_dataset)
 
